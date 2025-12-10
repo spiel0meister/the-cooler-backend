@@ -22,6 +22,7 @@
     },
     "homepage": "https://github.com/spiel0meister/the-cooler-backend#readme",
     "dependencies": {
+        "dotenv": "^17.2.3",
         "express": "^5.2.1",
         "express-session": "^1.18.2",
         "expressjs": "^1.0.1",

@@ -1,10 +1,10 @@
 import { createServer } from "http";
-import { loadEnvFile } from "process";
 import express from "express";
 import session from "express-session";
 import { MongoClient } from "mongodb";
+import dotenv from "dotenv";
 
-loadEnvFile(".env");
+dotenv.config();
 
 const port = 6969;
 
