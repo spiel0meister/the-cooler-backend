@@ -1,0 +1,30 @@
+{
+    "name": "the-cooler-backend",
+    "version": "1.0.0",
+    "description": "The backend for the-cooler-shop.",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "run": "node index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/spiel0meister/the-cooler-backend.git"
+    },
+    "keywords": [
+        "backend"
+    ],
+    "author": "Žan Sovič",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/spiel0meister/the-cooler-backend/issues"
+    },
+    "homepage": "https://github.com/spiel0meister/the-cooler-backend#readme",
+    "dependencies": {
+        "express": "^5.2.1",
+        "express-session": "^1.18.2",
+        "expressjs": "^1.0.1",
+        "mongodb": "^7.0.0"
+    }
+}
