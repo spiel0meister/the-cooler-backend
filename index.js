@@ -36,12 +36,12 @@ app.use(session({
 app.use(cors());
 
 app.get("/api/logout", (req, res) => {
-    if (req.session.email == null) {
+    if (req.session.userId == null) {
         res.sendStatus(400);
         return;
     }
 
-    res.session.email = null;
+    req.session.userId = null;
     res.sendStatus(200);
 });
 
@@ -60,13 +60,13 @@ app.get("/api/login", async (req, res) => {
         return;
     }
 
-    const user = await User.findOne({email, password});
+    const user = await User.findOne({email, password}).exec();
     if (!user) {
         res.sendStatus(400);
         return;
     }
 
-    res.session.email = user.email;
+    req.session.userId = user._id;
     res.sendStatus(200);
 });
 
