@@ -22,10 +22,12 @@
     },
     "homepage": "https://github.com/spiel0meister/the-cooler-backend#readme",
     "dependencies": {
+        "cors": "^2.8.5",
         "dotenv": "^17.2.3",
         "express": "^5.2.1",
         "express-session": "^1.18.2",
         "expressjs": "^1.0.1",
-        "mongodb": "^7.0.0"
+        "mongodb": "^7.0.0",
+        "mongoose": "^9.0.1"
     }
 }
