@@ -18,6 +18,14 @@ const mongo_uri = process.env.MONGO_URI;
 if (mongo_uri == undefined) throw "No mongo URI";
 connect(mongo_uri);
 
+app.use(cors());
+app.use(session({
+    secret: "very-secret-secret",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false },
+}));
+
 const UserSchema = new Schema({
     name: String,
     surname: String,
@@ -27,17 +35,14 @@ const UserSchema = new Schema({
 
 const User = model("User", UserSchema);
 
-app.use(session({
-    secret: "very-secret-secret",
-    resave: true,
-    saveUninitialized: true,
-    cookie: { secure: false },
-}));
-app.use(cors());
+app.get("/api/test", (req, res) => {
+    console.log(req.session);
+    res.sendStatus(200);
+})
 
 app.get("/api/logout", (req, res) => {
     if (req.session.userId == null) {
-        res.sendStatus(400);
+        res.status(400).send("Not logged in");
         return;
     }
 
@@ -48,21 +53,19 @@ app.get("/api/logout", (req, res) => {
 app.get("/api/login", async (req, res) => {
     const email = req.query.email;
     if (email == null) {
-        console.error("No email");
-        res.sendStatus(400);
+        res.status(400).send("No email");
         return;
     }
 
     const password = req.query.password;
     if (password == null) {
-        console.error("No password");
-        res.sendStatus(400);
+        res.status(400).send("No password");
         return;
     }
 
-    const user = await User.findOne({email, password}).exec();
+    const user = await User.findOne({ email, password }).exec();
     if (!user) {
-        res.sendStatus(400);
+        res.status(400).send("No user");
         return;
     }
 
@@ -73,29 +76,25 @@ app.get("/api/login", async (req, res) => {
 app.get("/api/signup", async (req, res) => {
     const name = req.query.name;
     if (name == null) {
-        console.error("No name");
-        res.sendStatus(400);
+        res.status(400).send("No name");
         return;
     }
 
     const surname = req.query.surname;
     if (surname == null) {
-        console.error("No surname");
-        res.sendStatus(400);
+        res.status(400).send("No surname");
         return;
     }
 
     const email = req.query.email;
     if (email == null) {
-        console.error("No email");
-        res.sendStatus(400);
+        res.status(400).send("No email");
         return;
     }
 
     const password = req.query.password;
     if (password == null) {
-        console.error("No password");
-        res.sendStatus(400);
+        res.status(400).send("No password");
         return;
     }
 
@@ -103,8 +102,7 @@ app.get("/api/signup", async (req, res) => {
 
     const userAlreadyExits = await User.findOne({ email }).exec();
     if (userAlreadyExits) {
-        console.error("Already exists");
-        res.sendStatus(400);
+        res.status(400).send("User already exists");
         return;
     }
 
