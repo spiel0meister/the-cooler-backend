@@ -2,9 +2,14 @@ import { createServer } from "node:http";
 import process from "node:process";
 import express from "express";
 import session from "express-session";
-import mongoose, { Schema, model, connect } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
+import crypto from "node:crypto";
+
+function sha256(s)  {
+    return crypto.createHash("sha256").update(s).digest("hex");
+}
 
 dotenv.config();
 
@@ -16,7 +21,7 @@ const server = createServer(app);
 const mongo_uri = process.env.MONGO_URI;
 
 if (mongo_uri == undefined) throw "No mongo URI";
-connect(mongo_uri);
+mongoose.connect(mongo_uri);
 
 app.use(cors());
 app.use(session({
@@ -63,7 +68,8 @@ app.get("/api/login", async (req, res) => {
         return;
     }
 
-    const user = await User.findOne({ email, password }).exec();
+    const passwordHashed = sha256(password);
+    const user = await User.findOne({ email, password: passwordHashed }).exec();
     if (!user) {
         res.status(400).send("No user");
         return;
@@ -98,7 +104,8 @@ app.get("/api/signup", async (req, res) => {
         return;
     }
 
-    const user = new User({ name, surname, email, password });
+    const passwordHashed = sha256(password);
+    const user = new User({ name, surname, email, password: passwordHashed });
 
     const userAlreadyExits = await User.findOne({ email }).exec();
     if (userAlreadyExits) {
