@@ -25,9 +25,9 @@ mongoose.connect(mongo_uri);
 
 app.use(cors());
 app.use(session({
-    secret: "very-secret-secret",
+    secret: "pendulum",
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: { secure: false },
 }));
 
@@ -40,19 +40,25 @@ const UserSchema = new Schema({
 
 const User = model("User", UserSchema);
 
-app.get("/api/test", (req, res) => {
-    console.log(req.session);
-    res.sendStatus(200);
+app.get("/api/auth-check", (req, res) => {
+    const session = req.session;
+    const obj = {
+        auth: session.userId != null,
+        user: session.userId,
+    };
+    console.log(obj);
+    res.json(obj);
 })
 
 app.get("/api/logout", (req, res) => {
-    if (req.session.userId == null) {
-        res.status(400).send("Not logged in");
-        return;
-    }
-
-    req.session.userId = null;
-    res.sendStatus(200);
+    req.session.destroy((err) => {
+        if (err != null) {
+            console.error("Couldn't log out:", err);
+            return res.status(500);
+        }
+        console.log("Log out success");
+        res.json({ success: true });
+    });
 });
 
 app.get("/api/login", async (req, res) => {
@@ -75,6 +81,7 @@ app.get("/api/login", async (req, res) => {
         return;
     }
 
+    console.log("Logged in successfully!");
     req.session.userId = user._id;
     res.sendStatus(200);
 });
@@ -114,6 +121,7 @@ app.get("/api/signup", async (req, res) => {
     }
 
     await user.save();
+    console.log("Signed up successfully!");
 });
 
 server.listen(port, () => {
